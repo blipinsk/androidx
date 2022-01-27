@@ -131,12 +131,15 @@ class ModifierParameterDetector : Detector(), SourceCodeScanner {
                 val optionalParameterIndex = node.uastParameters.indexOfFirst { parameter ->
                     (parameter.sourcePsi as? KtParameter)?.hasDefaultValue() == true
                 }
-                if (index != optionalParameterIndex) {
+                val mandatoryParameterIndex = node.uastParameters.indexOfFirst { parameter ->
+                    (parameter.sourcePsi as? KtParameter)?.hasDefaultValue() == false
+                }
+                if (index != optionalParameterIndex || index < mandatoryParameterIndex) {
                     context.report(
                         ModifierParameter,
                         node,
                         context.getNameLocation(modifierParameterElement),
-                        "$modifierName parameter should be the first optional parameter",
+                        "$modifierName parameter should be the first optional parameter, after all mandatory parameters",
                         // Hard to make a lint fix for this and keep parameter formatting, so
                         // ignore it
                     )
@@ -155,7 +158,7 @@ class ModifierParameterDetector : Detector(), SourceCodeScanner {
                 "\n- Have a type of `${Names.Ui.Modifier.shortName}`" +
                 "\n- Either have no default value, or have a default value of " +
                 "`${Names.Ui.Modifier.shortName}`" +
-                "\n- If optional, be the first optional parameter in the parameter list",
+                "\n- If optional, be the first optional parameter, after all mandatory parameters in the parameter list",
             Category.CORRECTNESS, 3, Severity.WARNING,
             Implementation(
                 ModifierParameterDetector::class.java,
