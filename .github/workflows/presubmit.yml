@@ -99,6 +99,7 @@ jobs:
           echo "::set-output name=files::$AFFECTED_FILES"
       - name: Install ndk
         run: |
+          yes | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses
           sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;23.1.7779620" --sdk_root=${ANDROID_SDK_ROOT}
       - name: "warm up gradle"
         id: warm-up-gradle-cache
@@ -106,6 +107,7 @@ jobs:
         env:
           JAVA_HOME: ${{ steps.setup-java.outputs.path }}
           JAVA_TOOLS_JAR: ${{ steps.setup-tools-jar.outputs.toolsJar }}
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_LATEST_HOME }}
         with:
           arguments: tasks -PandroidXUnusedParameter=activity # add project name to cache key
           build-root-directory: activity
