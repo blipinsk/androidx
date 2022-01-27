@@ -183,7 +183,7 @@ jobs:
           JAVA_HOME: ${{ steps.setup-java.outputs.path }}
           JAVA_TOOLS_JAR: ${{ steps.setup-tools-jar.outputs.toolsJar }}
         with:
-          arguments: tasks -PandroidXUnusedParameter=${{ env.project-root }} # add project name to cache key
+          arguments: projects -PandroidXUnusedParameter=${{ env.project-root }} # add project name to cache key
           build-root-directory: ${{ env.project-root }}
           configuration-cache-enabled: false
           dependencies-cache-enabled: true
